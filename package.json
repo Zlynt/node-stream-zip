@@ -1,5 +1,5 @@
 {
-  "name": "node-stream-zip",
+  "name": "archive-kit",
   "version": "1.15.0",
   "description": "node.js library for reading and extraction of ZIP archives",
   "keywords": [
@@ -8,11 +8,11 @@
     "unzip",
     "stream"
   ],
-  "homepage": "https://github.com/antelle/node-stream-zip",
+  "homepage": "https://github.com/Zlynt/node-stream-zip",
   "author": "Antelle <antelle.net@gmail.com> (https://github.com/antelle)",
   "bugs": {
     "email": "antelle.net@gmail.com",
-    "url": "https://github.com/antelle/node-stream-zip/issues"
+    "url": "https://github.com/Zlynt/node-stream-zip/issues"
   },
   "license": "MIT",
   "files": [
@@ -29,7 +29,7 @@
   "types": "node_stream_zip.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/antelle/node-stream-zip.git"
+    "url": "https://github.com/Zlynt/node-stream-zip.git"
   },
   "engines": {
     "node": ">=0.12.0"

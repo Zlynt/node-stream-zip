@@ -1,4 +1,8 @@
-# node-stream-zip ![CI Checks](https://github.com/antelle/node-stream-zip/workflows/CI%20Checks/badge.svg)
+# archive-kit ![CI Checks](https://github.com/Zlynt/node-stream-zip/workflows/CI%20Checks/badge.svg)
+
+This repo is a fork from dtcookie/node-stream-zip, that is a fork from antelle/node-stream-zip.
+
+On the future this repo will be fully rewritten.
 
 node.js library for reading and extraction of ZIP archives.  
 Features:
@@ -15,7 +19,7 @@ Features:
 ## Installation
 
 ```sh
-npm i node-stream-zip
+npm i archive-kit
 ```
 
 ## Usage
@@ -31,7 +35,7 @@ may be more flexible for certain operations.
 
 Open a zip file
 ```javascript
-const StreamZip = require('node-stream-zip');
+const StreamZip = require('archive-kit');
 const zip = new StreamZip.async({ file: 'archive.zip' });
 ```
 
@@ -104,7 +108,7 @@ zip.on('entry', entry => {
 
 Open a zip file
 ```javascript
-const StreamZip = require('node-stream-zip');
+const StreamZip = require('archive-kit');
 const zip = new StreamZip({ file: 'archive.zip' });
 
 // Handle errors
