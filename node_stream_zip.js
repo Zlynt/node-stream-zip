@@ -922,7 +922,7 @@ class ZipEntry {
         readUInt8(data, offset) // version
         offset += 1
         length -= 1
-        var nameCRC32 = readUInt32LE(data, offset)
+        // var nameCRC32 = readUInt32LE(data, offset)
         offset += 4
         length -= 4
         const nameData = data.slice(offset, (offset += length));
