@@ -542,18 +542,21 @@ const StreamZip = function (config) {
         const originalDir = dir;
 
         if (dirExtensions.length) {
+            const replaceExtension = (path, extension) => {
+                const replace = extension.replace('.', '_');
+                return path.replace(extension, replace);
+            };
+
             let extension = dirExtensions.find((ext) => lastDir.includes(ext));
 
             if (extension) {
                 rename = true;
-                const replace = extension.replace('.', '_');
-                dir = dir.replace(extension, replace);
-            }
-
-            extension = dirExtensions.find((ext) => dir.includes(ext));
-            if (extension) {
-                const replace = extension.replace('.', '_');
-                dir = dir.replace(extension, replace);
+                dir = replaceExtension(dir, extension);
+            } else {
+                extension = dirExtensions.find((ext) => dir.includes(ext));
+                if (extension) {
+                    dir = replaceExtension(dir, extension);
+                }
             }
         }
         
