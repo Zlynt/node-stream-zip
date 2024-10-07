@@ -1,6 +1,6 @@
 {
   "name": "archive-kit",
-  "version": "1.15.0",
+  "version": "1.2.0",
   "description": "node.js library for reading and extraction of ZIP archives",
   "keywords": [
     "zip",
