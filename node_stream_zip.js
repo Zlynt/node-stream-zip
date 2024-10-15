@@ -9,7 +9,6 @@ const path = require('path');
 const events = require('events');
 const zlib = require('zlib');
 const stream = require('stream');
-const { dir } = require('console');
 
 const consts = {
     /* The local file header */
@@ -492,7 +491,7 @@ const StreamZip = function (config) {
         return (entry.flags & 0x8) !== 0x8;
     }
 
-    function extract(entry, outPath, callback, dirExtensions = []) {
+    function extract(entry, outPath, callback) {
         that.stream(entry, (err, stm) => {
             if (err) {
                 callback(err);
@@ -519,7 +518,7 @@ const StreamZip = function (config) {
                     }
                     fsStm = fs.createWriteStream(outPath, { fd: fdFile });
                     fsStm.on('finish', () => {
-                        that.emit('extract', entry, outPath, dirExtensions);
+                        that.emit('extract', entry, outPath);
                         if (!errThrown) {
                             callback();
                         }
@@ -530,44 +529,17 @@ const StreamZip = function (config) {
         });
     }
 
-    function createDirectories(baseDir, dirs, callback, dirExtensions, filesToRename = []) {
+    function createDirectories(baseDir, dirs, callback) {
         if (!dirs.length) {
-            return callback(null, filesToRename);
+            return callback();
         }
         let dir = dirs.shift();
-        const lastDir = dir[dir.length - 1];
-        let rename = false;
-        
         dir = path.join(baseDir, path.join(...dir));
-        const originalDir = dir;
-
-        if (dirExtensions.length) {
-            const replaceExtension = (path, extension) => {
-                const replace = extension.replace('.', '_');
-                return path.replace(extension, replace);
-            };
-
-            let extension = dirExtensions.find((ext) => lastDir.includes(ext));
-
-            if (extension) {
-                rename = true;
-                dir = replaceExtension(dir, extension);
-            } else {
-                extension = dirExtensions.find((ext) => dir.includes(ext));
-                if (extension) {
-                    dir = replaceExtension(dir, extension);
-                }
-            }
-        }
-        
         fs.mkdir(dir, { recursive: true }, (err) => {
             if (err && err.code !== 'EEXIST') {
                 return callback(err);
             }
-            if (rename) {
-                filesToRename.push({ dir, originalDir });
-            }
-            createDirectories(baseDir, dirs, callback, dirExtensions, filesToRename);
+            createDirectories(baseDir, dirs, callback);
         });
     }
 
@@ -585,7 +557,7 @@ const StreamZip = function (config) {
         });
     }
 
-    this.extract = function (entry, outPath, callback, dirExtensions = []) {
+    this.extract = function (entry, outPath, callback) {
         let entryName = entry || '';
         if (typeof entry === 'string') {
             entry = this.entry(entry);
@@ -632,27 +604,17 @@ const StreamZip = function (config) {
                     }
                 }
             }
-
             dirs.sort((x, y) => {
                 return x.length - y.length;
             });
             if (dirs.length) {
-                createDirectories(outPath, dirs, (err, filesToRename) => {
+                createDirectories(outPath, dirs, (err) => {
                     if (err) {
                         callback(err);
                     } else {
                         extractFiles(outPath, entryName, files, callback, 0);
-                        if (filesToRename.length) {
-                            filesToRename.forEach(file => {
-                                fs.rename(file.dir, file.originalDir, (err) => {
-                                    if (err) {
-                                        callback(err);
-                                    }
-                                });
-                            });
-                        }
                     }
-                }, dirExtensions);
+                });
             } else {
                 extractFiles(outPath, entryName, files, callback, 0);
             }
@@ -714,7 +676,7 @@ StreamZip.async = class StreamZipAsync extends events.EventEmitter {
         const zip = new StreamZip(config);
 
         zip.on('entry', (entry) => this.emit('entry', entry));
-        zip.on('extract', (entry, outPath, dirExtensions) => this.emit('extract', entry, outPath, dirExtensions));
+        zip.on('extract', (entry, outPath) => this.emit('extract', entry, outPath));
 
         this[propZip] = new Promise((resolve, reject) => {
             zip.on('ready', () => {
@@ -771,7 +733,7 @@ StreamZip.async = class StreamZipAsync extends events.EventEmitter {
         });
     }
 
-    async extract(entry, outPath, dirExtensions = []) {
+    async extract(entry, outPath) {
         const zip = await this[propZip];
         return new Promise((resolve, reject) => {
             zip.extract(entry, outPath, (err, res) => {
@@ -780,7 +742,7 @@ StreamZip.async = class StreamZipAsync extends events.EventEmitter {
                 } else {
                     resolve(res);
                 }
-            }, dirExtensions);
+            });
         });
     }
 

@@ -138,10 +138,10 @@ declare namespace StreamZip {
         entries(): Promise<{ [name: string]: ZipEntry }>;
         entryData(entry: string | ZipEntry): Promise<Buffer>;
         stream(entry: string | ZipEntry): Promise<NodeJS.ReadableStream>;
-        extract(entry: string | ZipEntry | null, outPath: string, dirExtensions?: string[]): Promise<number | undefined>;
+        extract(entry: string | ZipEntry | null, outPath: string): Promise<number | undefined>;
 
         on(event: 'entry', handler: (entry: ZipEntry) => void): void;
-        on(event: 'extract', handler: (entry: ZipEntry, outPath: string, dirExtensions?: string[]) => void): void;
+        on(event: 'extract', handler: (entry: ZipEntry, outPath: string) => void): void;
 
         close(): Promise<void>;
     }
@@ -166,7 +166,7 @@ declare class StreamZip {
     on(event: 'error', handler: (error: any) => void): void;
     on(event: 'entry', handler: (entry: ZipEntry) => void): void;
     on(event: 'ready', handler: () => void): void;
-    on(event: 'extract', handler: (entry: ZipEntry, outPath: string, dirExtensions?: string[]) => void): void;
+    on(event: 'extract', handler: (entry: ZipEntry, outPath: string) => void): void;
 
     entry(name: string): ZipEntry | undefined;
 
@@ -188,8 +188,7 @@ declare class StreamZip {
     extract(
         entry: string | ZipEntry | null,
         outPath: string,
-        callback: (err?: any, res?: number) => void,
-        dirExtensions?: string[],
+        callback: (err?: any, res?: number) => void
     ): void;
 
     close(callback?: (err?: any) => void): void;
